@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/menu_drawer_name"
+        android:icon="@android:drawable/ic_menu_myplaces"
+        android:title="개발자"/>
+
+    <item
+        android:id="@+id/menu_drawer_gabege"
+        android:icon="@android:drawable/ic_menu_delete"
+        android:title="휴지통" />
+
+    <item
+        android:id="@+id/menu_drawer_version"
+        android:icon="@android:drawable/ic_menu_help"
+        android:title="버전" />
+
+
+</menu>

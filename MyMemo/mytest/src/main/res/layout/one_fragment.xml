@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+tools:context=".MainActivity">
+
+<EditText
+    android:id="@+id/number2"
+    android:layout_width="377dp"
+    android:layout_height="45dp"
+    android:layout_below="@+id/number1"
+    android:layout_centerHorizontal="true"
+    android:layout_marginTop="12dp"
+    android:hint="secondnumber" />
+
+<EditText
+    android:id="@+id/number1"
+    android:layout_width="377dp"
+    android:layout_height="45dp"
+    android:hint="first number"
+    android:inputType="textPersonName"
+    android:layout_alignParentTop="true"/>
+
+<Button
+    android:id="@+id/subButton"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignBaseline="@+id/AddButton"
+    android:layout_alignBottom="@+id/AddButton"
+    android:layout_toEndOf="@+id/AddButton"
+    android:layout_toRightOf="@+id/AddButton"
+    android:text="빼기" />
+
+<Button
+    android:id="@+id/divideButton"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignBaseline="@+id/multButton"
+    android:layout_alignBottom="@+id/multButton"
+    android:layout_toEndOf="@+id/multButton"
+    android:layout_toRightOf="@+id/multButton"
+    android:text="나누기" />
+
+<Button
+    android:id="@+id/multButton"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignBaseline="@+id/subButton"
+    android:layout_alignBottom="@+id/subButton"
+    android:layout_toEndOf="@+id/subButton"
+    android:layout_toRightOf="@+id/subButton"
+    android:text="곱하기" />
+
+<Button
+    android:id="@+id/AddButton"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentLeft="true"
+    android:layout_alignParentStart="true"
+    android:layout_below="@+id/number2"
+    android:layout_marginLeft="20dp"
+    android:layout_marginStart="20dp"
+    android:layout_marginTop="21dp"
+    android:text="더하기" />
+
+<TextView
+    android:id="@+id/result"
+    android:layout_width="376dp"
+    android:layout_height="36dp"
+
+    android:layout_alignBottom="@+id/number1"
+    android:layout_alignParentEnd="true"
+    android:layout_alignParentRight="true"
+    android:textAppearance="@style/TextAppearance.AppCompat.Display2" />
+
+<Button
+    android:id="@+id/button"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+
+    android:layout_below="@+id/subButton"
+    android:layout_centerHorizontal="true"
+    android:layout_marginTop="30dp"
+    android:text="Button" />
+</RelativeLayout>
