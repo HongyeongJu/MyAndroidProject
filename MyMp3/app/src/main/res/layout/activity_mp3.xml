@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/pickture"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+
+    <SeekBar
+        android:id="@+id/seekbar"
+        style="?android:progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="100"
+        android:progress="0" />
+
+    <!--  진행 시간 , 종료시간-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp">
+
+        <TextView
+            android:id="@+id/progress"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="0"
+            android:textSize="15dp"
+            android:gravity="left"/>
+
+        <TextView
+            android:id="@+id/end"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:textSize="15dp"
+            android:gravity="right"/>
+
+    </LinearLayout>
+    <!-- 역순 별표, 반복 체크 버튼-->
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="30dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp">
+        <ImageView
+            android:id="@+id/shuffle"
+            android:src="@drawable/shuffle"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="left"/>
+
+        <ImageView
+            android:id="@+id/star"
+            android:src="@drawable/star"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"/>
+        <ImageView
+            android:id="@+id/rep"
+            android:src="@drawable/repeat"
+            android:layout_width="40dp"
+            android:layout_height="40dp" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Hello"
+        android:textStyle="bold"
+        android:textSize="40dp"
+        android:gravity="center_horizontal"/>
+
+    <TextView
+        android:id="@+id/author"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="author"
+        android:textSize="20dp"
+        android:gravity="center_horizontal"/>
+    <!-- 음성, 뒤로가기, 플레이 , 앞으로 가기 , 이퀄라이저-->
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="30dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:gravity="center">
+
+        <ImageView
+            android:src="@drawable/volume"
+            android:id="@+id/musicvolume"
+            android:layout_width="30dp"
+            android:layout_height="30dp" />
+
+        <ImageView
+            android:id="@+id/musicback"
+            android:src="@drawable/backward"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_weight="1"/>
+
+        <ImageView
+            android:id="@+id/play"
+            android:src="@drawable/play"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_weight="1"/>
+
+        <ImageView
+            android:id="@+id/musicforward"
+            android:src="@drawable/forward"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_weight="1"/>
+
+        <ImageView
+            android:id="@+id/equaliser"
+            android:src="@drawable/equalizer"
+            android:layout_width="30dp"
+            android:layout_height="30dp" />
+
+    </LinearLayout>
+
+</LinearLayout>
