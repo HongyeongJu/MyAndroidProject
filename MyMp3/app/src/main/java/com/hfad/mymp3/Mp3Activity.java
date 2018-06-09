@@ -55,21 +55,35 @@ public class Mp3Activity extends AppCompatActivity implements MediaPlayer.OnComp
 
         // 시크바를 움직여서 음악제어를 합니다.
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            // 프로그레스가 진행이되면 ProgressTextView만 갱신되게끔 만들기
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-
+                int position = progress * mp.getDuration() / 100;           // 현재 위치를 비율로 알아냅니다. position은 현재 위치입니다.
+                String str = String.format(Locale.getDefault(), "%d:%02d", position / 60000, (position / 1000) % 60);
+                progress_tv.setText(str);
             }
             // 시크바를 트레킹을 할때 음악의 경과를 바꿉니다.
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-                int sek_progress = seekBar.getProgress();
-                mp.seekTo(sek_progress * mp.getDuration() / 100);
-
+                seekBarTracking(seekBar);
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
+                seekBarTracking(seekBar);
+            }
+        });
+    }
 
+    // SeekBar를 움직일 때 음악이랑 progress 텍스트뷰에 현재 시간을 알려줌으로 인터페이스를 처리하는 메서드입니다.
+    private void seekBarTracking(final SeekBar seekBar){
+        // Thread Queue에 맨 앞에 보내서 다른 처리를 무시하고 처리할 수 있도록 합니다.
+        handler.postAtFrontOfQueue(new Runnable() {
+            @Override
+            public void run() {
+                int sek_progress = seekBar.getProgress();
+                mp.seekTo(sek_progress * mp.getDuration() / 100);       // 음악진행을 바꾸기
+                updateProgressTextView();
             }
         });
     }
@@ -90,21 +104,25 @@ public class Mp3Activity extends AppCompatActivity implements MediaPlayer.OnComp
             @Override
             public void run() {
                 if(mp.isPlaying()){     // 플레이중이라면 시간 표현을 증가시켜준다.
-                    miliSecond = mp.getCurrentPosition();       //현재 음악의 milisecond 단위로 위치를 받습니다. 이 변수를 통해서 seekbar의 위치와 진행 경과 텍스트를 변화시킵니다.
-                    Log.d("milisecond", String.valueOf(miliSecond));
-                    String str = String.format(Locale.getDefault(), "%d:%02d", miliSecond / 60000 , (miliSecond / 1000) % 60);
+                    updateProgressTextView();
                     seekBar.setProgress((int)(((double)miliSecond / mp.getDuration()) * 100));
-                    progress_tv.setText(str);
                 }
                 handler.postDelayed(this, 1000);
             }
         });
     }
+
+    // 이 메서드는 현재 진행되고 있는 시간을 갱신하는 메서드입니다.
+    private void updateProgressTextView(){
+        miliSecond = mp.getCurrentPosition();       //현재 음악의 milisecond 단위로 위치를 받습니다. 이 변수를 통해서 seekbar의 위치와 진행 경과 텍스트를 변화시킵니다.
+        Log.d("milisecond", String.valueOf(miliSecond));
+        String str = String.format(Locale.getDefault(), "%d:%02d", miliSecond / 60000 , (miliSecond / 1000) % 60);
+        progress_tv.setText(str);
+    }
     // 이 메소드는 음악을 일시 정지하는 메소드입니다.
     private void pause() {
         mp.pause();
     }
-
 
     @Override
     public void onCompletion(MediaPlayer mp) {
