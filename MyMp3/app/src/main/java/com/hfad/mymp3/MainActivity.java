@@ -1,6 +1,7 @@
 package com.hfad.mymp3;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Environment;
@@ -9,16 +10,15 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import java.io.File;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MusicListItemAdapter.MyOnItemClickListener {
 
     ListView listView;
+    int permisstionCheck = 1;       //퍼미션 저장 변수
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,14 +29,32 @@ public class MainActivity extends AppCompatActivity {
 
         checkPermission();
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        if(permisstionCheck == PackageManager.PERMISSION_GRANTED){
+            updateList();
+        }else {
+            checkPermission();
+        }
 
-            }
-        });
     }
 
+    @Override
+    public void onItemClick(ListItem item) {
+        String name = item.getName();           // 아이템의 이름, 경로, 타입을 받고 타입을 가지고 분류를 한다.
+        String path = item.getPath();
+        int type = item.getFiletype();
+
+        if(type == ListItem.FOLDER) {           // 만약 타입이 폴더라면 그 폴더 내부의 리스트를 다시 띄웁니다.
+            updateList(new File(path));
+        }else if(type == ListItem.MP3){         // 만약 타입이 MP3라면 Intent로 플레이 액티비티를 띄워서 노래를 실행시킵니다.
+            Intent intent = new Intent(getApplicationContext(), Mp3Activity.class);
+            intent.putExtra("name", name);
+            intent.putExtra("path",path);
+            intent.putExtra("type",type);
+            startActivity(intent);
+        }else if(type == ListItem.OTHERS){          // 다른 이상한 파일이라면 오류 토스트 메시지를 띄웁니다.
+            Toast.makeText(getApplicationContext(), "음성파일만 재생가능합니다. ", Toast.LENGTH_SHORT).show();
+        }
+    }
 
     private void updateList(){
         if(!checkExStorage()){
@@ -49,10 +67,12 @@ public class MainActivity extends AppCompatActivity {
             ListItem[] items = makeList(path);
 
             MusicListItemAdapter adapter = new MusicListItemAdapter(this, items);
+            adapter.setMyOnItemClickListener(this);
 
             listView.setAdapter(adapter);
         }
     }
+
 
     private void updateList(File path){
         if(!checkExStorage()){
@@ -62,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
             // 사용이 가능하다면 File을 불러들여서 리스트를 출력
             ListItem[] items = makeList(path);
             MusicListItemAdapter adapter = new MusicListItemAdapter(this, items);
+            adapter.setMyOnItemClickListener(this);
 
             listView.setAdapter(adapter);
         }
@@ -76,10 +97,12 @@ public class MainActivity extends AppCompatActivity {
         for(int i = 0 ; i < files.length; i++){
             String itemName = files[i].getName();
             String itemPath = files[i].getPath();
+            Log.d("test", itemName);
             int type = 0;
             int resId = 0;
             if(files[i].isFile()){      // 만약 파일이면
-                String exter = itemName.substring(itemName.indexOf('.') , itemName.length());
+                String exter = itemName.substring(itemName.lastIndexOf('.') +1, itemName.length());
+                Log.d("exter", exter);
                 if(exter.equals("mp3") || exter.equals("mp4") || exter.equals("wav") || exter.equals("wma") || exter.equals("aac") ||
                         exter.equals("flac")){
                     type = ListItem.MP3;
@@ -115,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
 
     //읽기 퍼미션을 체크하는 메소드입니다.
     private void checkPermission(){
-        int permisstionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
+        permisstionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
 
         if(permisstionCheck == PackageManager.PERMISSION_DENIED){
 

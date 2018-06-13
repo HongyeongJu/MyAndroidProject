@@ -1,6 +1,8 @@
 package com.hfad.mymp3;
 
+import android.content.Intent;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -32,23 +34,32 @@ public class Mp3Activity extends AppCompatActivity implements MediaPlayer.OnComp
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mp3);
 
+        //Main으로부터 받은 Intent를 받고 이름과 경로를 받아옵니다.
+        Intent intent = getIntent();
+        String name = intent.getStringExtra("name");
+        String path = intent.getStringExtra("path");
+        Log.d("path", path);
+
+        Uri.Builder builder = new Uri.Builder();        //Uri 객체 빌더를 생성하고 음악파일의 uri를 생성합니다.
+        builder.encodedPath(path);
+        Uri mp3Uri = builder.build();           // mp3의 Uri객체를 생성합니다 이것을 MediaPlayer에 넣습니다.
+
         //객체들을 다 할당 시킨다.
-        mp = MediaPlayer.create(this, R.raw.baram);     // 임시적으로 바람의나라 음악을 튼다.
+        mp = MediaPlayer.create(this, mp3Uri);      // mp3Uri객체를 생성하고 그것을 바탕으로 MediaPlayer를 통해 mp객체를 만듬
+
         play_stop_button = (ImageView)findViewById(R.id.play);
         progress_tv = (TextView)findViewById(R.id.progress);
         end_time_tv = (TextView)findViewById(R.id.end);
         seekBar = (SeekBar)findViewById(R.id.seekbar);
-
+        play();                                             // 음악을 튼다.
         play_stop_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // 음악이 재생중이라면 pause를 실행시키고 play 버튼 모양으로 바꿉니다.
                 if(mp.isPlaying()){
                     pause();
-                    play_stop_button.setImageResource(R.drawable.play);
                 }else{ // 음악이 일시정지중이라면 play를 실행시키고 pause 모양으로 바꿉니다.
                     play();
-                    play_stop_button.setImageResource(R.drawable.pause);
                 }
             }
         });
@@ -91,7 +102,7 @@ public class Mp3Activity extends AppCompatActivity implements MediaPlayer.OnComp
     // 음악을 실행 시키는 메소드입니다.
     private void play(){
         mp.start();
-
+        play_stop_button.setImageResource(R.drawable.pause);
         // 음악 플레이어가 몇분짜리인지 표시해줍니다.
         int m = mp.getDuration() / 60000;
         int s = (mp.getDuration() / 1000) % 60;
@@ -122,6 +133,7 @@ public class Mp3Activity extends AppCompatActivity implements MediaPlayer.OnComp
     // 이 메소드는 음악을 일시 정지하는 메소드입니다.
     private void pause() {
         mp.pause();
+        play_stop_button.setImageResource(R.drawable.play);
     }
 
     @Override
