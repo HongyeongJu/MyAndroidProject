@@ -45,12 +45,13 @@ public class MainActivity extends AppCompatActivity implements MusicListItemAdap
 
         if(type == ListItem.FOLDER) {           // 만약 타입이 폴더라면 그 폴더 내부의 리스트를 다시 띄웁니다.
             updateList(new File(path));
-        }else if(type == ListItem.MP3){         // 만약 타입이 MP3라면 Intent로 플레이 액티비티를 띄워서 노래를 실행시킵니다.
+        }else if(type == ListItem.MP3){         // 만약 타입이 MP3라면 Intent로 플레이 액티비티를 띄우고  플레이시키는 서비스도 실행시킵니다.
             Intent intent = new Intent(getApplicationContext(), Mp3Activity.class);
             intent.putExtra("name", name);
             intent.putExtra("path",path);
             intent.putExtra("type",type);
             startActivity(intent);
+
         }else if(type == ListItem.OTHERS){          // 다른 이상한 파일이라면 오류 토스트 메시지를 띄웁니다.
             Toast.makeText(getApplicationContext(), "음성파일만 재생가능합니다. ", Toast.LENGTH_SHORT).show();
         }
