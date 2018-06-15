@@ -13,8 +13,13 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.hfad.mymp3.Service.Mp3PlayService;
+import com.hfad.mymp3.Service.ServiceUtil;
 
 import java.util.Locale;
+
 
 public class Mp3Activity extends AppCompatActivity {
 
@@ -27,6 +32,19 @@ public class Mp3Activity extends AppCompatActivity {
 
     static int miliSecond =0;                   // 현재 초
     static Mp3PlayService mp3Service;              // 실제로 음악을 재생시키는 서비스입니다.
+
+    //이 객체는 음악 플레이가 진행되는 상황을 실시간으로 표시할 수 있는 Runnable 객체입니다.
+    Runnable showSeekBarRunable = new Runnable() {
+        @Override
+        public void run() {
+            if(Mp3PlayService.getMp().isPlaying()){     // 플레이중이라면 시간 표현을 증가시켜준다.
+                seekBar.setProgress((int)(((double)miliSecond / Mp3PlayService.getMp().getDuration()) * 100));
+                updateProgressTextView();
+            }
+            handler.postDelayed(this, 1000);
+        }
+    };
+
     //서비스 커넥션 객체를 정의 합니다 .
     // 서비스 커넥션 객체는 서비스가 연결되었을때 , 강제로 종료되었을 때의 처리를 할수 있습니다.
     static ServiceConnection connection = new ServiceConnection() {
@@ -54,13 +72,6 @@ public class Mp3Activity extends AppCompatActivity {
         String name = intent.getStringExtra("name");
         String path = intent.getStringExtra("path");
         Log.d("path", path);
-
-
-        Intent serviceIntent = new Intent(Mp3Activity.this , Mp3PlayService.class);
-        serviceIntent.putExtra("name", name);
-        serviceIntent.putExtra("path", path);
-        bindService(serviceIntent, Mp3Activity.connection, Service.BIND_AUTO_CREATE);
-
 
         play_stop_button = (ImageView)findViewById(R.id.play);
         progress_tv = (TextView)findViewById(R.id.progress);
@@ -100,6 +111,17 @@ public class Mp3Activity extends AppCompatActivity {
             }
         });
 
+        // 현재 실행되고 있는 서비스가 있다면. 그 서비스를 이용한다.
+        if(ServiceUtil.isMyServiceRunning(getApplicationContext(), Mp3PlayService.class)){
+            Toast.makeText(getApplicationContext(),"서비스 실행중", Toast.LENGTH_SHORT).show();
+            play();                                                                                 // 현재 실행중인 서비스가 있다면 play를 시켜서 화면에 새로이 갱신합니다.
+        }else{          // 현재 실행하는 서비스가 없다면 새로운 서비스를 만들어 낸다.
+            Intent serviceIntent = new Intent(Mp3Activity.this , Mp3PlayService.class);
+            serviceIntent.putExtra("name", name);
+            serviceIntent.putExtra("path", path);
+            bindService(serviceIntent, Mp3Activity.connection, Service.BIND_AUTO_CREATE);
+            startService(serviceIntent);
+        }
     }
 
     // SeekBar를 움직일 때 음악이랑 progress 텍스트뷰에 현재 시간을 알려줌으로 인터페이스를 처리하는 메서드입니다.
@@ -128,16 +150,7 @@ public class Mp3Activity extends AppCompatActivity {
 
         // 시크바 진행 수준을 표현해주기위해 핸들러 처리를 합니다.
         handler = new Handler();
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                if(Mp3PlayService.getMp().isPlaying()){     // 플레이중이라면 시간 표현을 증가시켜준다.
-                    updateProgressTextView();
-                    seekBar.setProgress((int)(((double)miliSecond / Mp3PlayService.getMp().getDuration()) * 100));
-                }
-                handler.postDelayed(this, 1000);
-            }
-        });
+        handler.post(showSeekBarRunable);       // seekBar 진행과 현재 진행 경과 텍스트를 보여주는 창을 갱신하는 Runnable을 만들어서 스레드화 시킵니다.
     }
 
     // 이 메서드는 현재 진행되고 있는 시간을 갱신하는 메서드입니다.
@@ -154,8 +167,11 @@ public class Mp3Activity extends AppCompatActivity {
         play_stop_button.setImageResource(R.drawable.play);
     }
 
+
+    // 화면이 폐기되면 실행됩니다~
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
+    protected void onDestroy() {
+        super.onDestroy();
+        handler.removeCallbacks(showSeekBarRunable);            // 액티비티를 나가면 현재 핸들러는 필요가 없으므로 핸들러를 삭제합니다.
     }
 }

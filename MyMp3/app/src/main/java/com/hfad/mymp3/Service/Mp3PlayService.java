@@ -1,4 +1,4 @@
-package com.hfad.mymp3;
+package com.hfad.mymp3.Service;
 
 import android.app.Service;
 import android.content.Intent;
@@ -17,14 +17,11 @@ public class Mp3PlayService extends Service implements MediaPlayer.OnCompletionL
     IBinder mp3Binder = new Mp3Binder();        //IBinder 인터페이스를 상속 구현한 mp3Binder객체입니다. 이걸로 액티비티와 그리고 알림창과 소통합니다.
 
     static MediaPlayer mp;                 // mediaPlayer 객체
-    static int minute = 0;          //현재 분
-    static int miliSecond = 0;      // 현재 초
-    static int total_duration = 0;      // 현재 진행 시간
     private String name;            // 곡의 이름
     private String path;            // 곡의 경로
 
     // 바인더에는 Service를 리턴하는 메소드를 만듭니다.
-    class Mp3Binder extends Binder {
+    public class Mp3Binder extends Binder {
         public Mp3PlayService getService() {
             return Mp3PlayService.this;
         }
@@ -35,7 +32,6 @@ public class Mp3PlayService extends Service implements MediaPlayer.OnCompletionL
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-
         name = intent.getStringExtra("name");
         path = intent.getStringExtra("path");
 
@@ -51,12 +47,15 @@ public class Mp3PlayService extends Service implements MediaPlayer.OnCompletionL
     @Override
     public void onCreate() {
         super.onCreate();
+
+
     }
 
     // 어차피 서비스 바인드를 사용하니 상관은 없을 듯 하다.
     // 직접 서비스를 조작할 수 있으니까.!!
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+
         return super.onStartCommand(intent, flags, startId);
     }
 
